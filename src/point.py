@@ -3,6 +3,7 @@ from typing_extensions import Self
 
 class Point:
     """Represents a single point on a canvas.
+    X = 0, Y = 0 is the top left of the canvas.
 
     Attributes:
         x (int): The X coordinate of the point.
@@ -87,7 +88,7 @@ class Point:
         if not isinstance(other, Point):
             return NotImplemented
         return Point(x=self.x - other.x, y=self.y - other.y)
-    
+
     def __rsub__(self, other: object) -> Self:
         """Subtracts two points, returning a new point. Returns NotImplemented
         if ``other`` is not a ``Point``.
