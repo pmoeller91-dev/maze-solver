@@ -1,3 +1,2 @@
 #!/usr/bin/env bash
-python3 src/main.py
-cd public && python3 -m http.server 8888
+pipenv run python3 src/main.py
