@@ -19,7 +19,7 @@ class Cell:
 
     def __init__(
         self,
-        window: Window,
+        window: Window | None = None,
         has_top_wall: bool = True,
         has_right_wall: bool = True,
         has_bottom_wall: bool = True,
@@ -28,7 +28,8 @@ class Cell:
         """Create a new cell representing a cell in a maze.
 
         Args:
-            window (Window): The parent window the cell will be drawn in
+            window (Window | None): The parent window the cell will be drawn in.
+            Defaults to None.
             has_top_wall (bool, optional): Whether the cell starts with a top wall. Defaults to True.
             has_right_wall (bool, optional): Whether the cell starts with a right wall. Defaults to True.
             has_bottom_wall (bool, optional): Whether the cell starts with a bottom wall. Defaults to True.
@@ -45,7 +46,9 @@ class Cell:
         self.has_left_wall = has_left_wall
 
     def draw(self, x1: int, y1: int, x2: int, y2: int) -> None:
-        """Draws the cell to the parent canvas at the specified coordinates
+        """Draws the cell to the parent canvas at the specified coordinates. If
+        constructed with no Window, this function changes the coordinates but
+        otherwise is a no-op.
 
         Args:
             x1 (int): X-coordinate of the top-left corner of the cell.
@@ -55,6 +58,8 @@ class Cell:
         """
         window = self._window
         self._x1, self._y1, self._x2, self._y2 = x1, y1, x2, y2
+        if window is None:
+            return
         if self.has_top_wall:
             line = Line(Point(x1, y1), Point(x2, y1))
             window.draw_line(line, _cell_color)
@@ -70,12 +75,15 @@ class Cell:
 
     def draw_move(self, to_cell: Self, undo=False):
         """Draw a move from one cell to another in the maze. Red by default,
-        grey if it is a move that was undone.
+        grey if it is a move that was undone. If constructed without a ``Window``,
+        this function is a no-op.
 
         Args:
             to_cell (Self): The cell to draw the move to
             undo (bool, optional): Whether the move is an undone move. Defaults to False.
         """
+        if self._window is None:
+            return
         color = "red" if undo is False else "gray"
         center = (Point(self._x1, self._y1) + Point(self._x2, self._y2)) // 2
         other_center = (

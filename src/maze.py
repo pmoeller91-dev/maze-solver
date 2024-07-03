@@ -8,18 +8,18 @@ class Maze:
 
     def __init__(
         self,
-        win: Window,
         x1: int,
         y1: int,
         num_rows: int,
         num_cols: int,
         cell_width: int,
         cell_height: int,
+        window: Window | None = None,
     ) -> None:
         """Creates a new 2D maze parented to the specified ``Window``.
 
         Args:
-            win (Window): The parent window to draw the maze on.
+            win (Window | None): The parent window to draw the maze on.
             x1 (int): The X coordinate of the top-left corner of the maze.
             y1 (int): The Y coordinate of the top-left corner of the maze.
             num_rows (int): The number of rows of cells in the maze.
@@ -27,7 +27,11 @@ class Maze:
             cell_width (int): The number of pixels wide each cell should be.
             cell_height (int): The number of pixels high each cell should be.
         """
-        self._win = win
+        if num_rows == 0 or num_cols == 0:
+            raise ValueError("Maze must have at least 1 row and 1 column")
+        if cell_height <= 0 or cell_width <= 0:
+            raise ValueError("Maze cells must be at least 1 pixel wide and 1 pixel tall")
+        self._win = window
         self._x1 = x1
         self._y1 = y1
         self._num_rows = num_rows
@@ -49,12 +53,15 @@ class Maze:
 
     def _draw_cell(self, i: int, j: int) -> None:
         """Draws a single cell based on its column and row within the maze, and
-        animates the drawing.
+        animates the drawing. If no Window is provided at construction, this
+        function is a no-op.
 
         Args:
             i (int): The column of the cell to draw
             j (int): The row of the cell to draw
         """
+        if self._win is None:
+            return
         cell_x1 = self._x1 + self._cell_width * i
         cell_y1 = self._y1 + self._cell_height * j
         cell_x2 = cell_x1 + self._cell_width
@@ -64,6 +71,9 @@ class Maze:
 
     def _animate(self) -> None:
         """Redraws the parent ``Window`` and pauses for a short delay, to allow
-        for a consistent framerate rather than instantaneous drawing"""
+        for a consistent framerate rather than instantaneous drawing. If no
+        Window is provided at construction, this function is a no-op."""
+        if self._win is None:
+            return
         self._win.redraw()
         sleep(1 / 25)

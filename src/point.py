@@ -1,4 +1,6 @@
 from typing_extensions import Self
+from collections.abc import Iterable
+from itertools import islice
 
 
 class Point:
