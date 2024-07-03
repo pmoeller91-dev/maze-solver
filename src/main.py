@@ -10,6 +10,8 @@ def main():
 
     maze = Maze(16, 16, 6, 6, 64, 64, win)
 
+    maze._break_entrance_and_exit()
+
     win.wait_for_close()
 
 

@@ -30,7 +30,9 @@ class Maze:
         if num_rows == 0 or num_cols == 0:
             raise ValueError("Maze must have at least 1 row and 1 column")
         if cell_height <= 0 or cell_width <= 0:
-            raise ValueError("Maze cells must be at least 1 pixel wide and 1 pixel tall")
+            raise ValueError(
+                "Maze cells must be at least 1 pixel wide and 1 pixel tall"
+            )
         self._win = window
         self._x1 = x1
         self._y1 = y1
@@ -72,8 +74,21 @@ class Maze:
     def _animate(self) -> None:
         """Redraws the parent ``Window`` and pauses for a short delay, to allow
         for a consistent framerate rather than instantaneous drawing. If no
-        Window is provided at construction, this function is a no-op."""
+        Window is provided at construction, this function is a no-op.
+        """
         if self._win is None:
             return
         self._win.redraw()
         sleep(1 / 25)
+
+    def _break_entrance_and_exit(self) -> None:
+        """Break the entrance and exit walls. Entry is always the top wall of
+        the top-left-most cell, and exit is always the bottom of the
+        bottom-right-most cell.
+        """
+        entry_cell = self._cells[0][0]
+        entry_cell.has_top_wall = False
+        self._draw_cell(0, 0)
+        exit_cell = self._cells[-1][-1]
+        exit_cell.has_bottom_wall = False
+        self._draw_cell(self._num_cols - 1, self._num_rows - 1)

@@ -4,6 +4,7 @@ from point import Point
 from line import Line
 
 _cell_color = "black"
+_absent_color = "#d9d9d9"
 
 
 class Cell:
@@ -60,6 +61,17 @@ class Cell:
         self._x1, self._y1, self._x2, self._y2 = x1, y1, x2, y2
         if window is None:
             return
+
+        top = Line(Point(x1, y1), Point(x2, y1))
+        right = Line(Point(x2, y1), Point(x2, y2))
+        bottom = Line(Point(x1, y2), Point(x2, y2))
+        left = Line(Point(x1, y1), Point(x1, y2))
+
+        window.draw_line(top, _absent_color)
+        window.draw_line(right, _absent_color)
+        window.draw_line(bottom, _absent_color)
+        window.draw_line(left, _absent_color)
+
         if self.has_top_wall:
             line = Line(Point(x1, y1), Point(x2, y1))
             window.draw_line(line, _cell_color)
