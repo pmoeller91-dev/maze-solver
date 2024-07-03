@@ -35,6 +35,30 @@ class TestPoint(unittest.TestCase):
         expected_point = Point(1, 1)
         self.assertEqual(point.__rsub__(point2), expected_point)
 
+    def test_mul(self):
+        point = Point(1, 2)
+        multiplier = 2
+        expected_point = Point(2, 4)
+        self.assertEqual(point * multiplier, expected_point)
+
+    def test_rmul(self):
+        point = Point(3, 6)
+        multiplier = 3
+        expected_point = Point(9, 18)
+        self.assertEqual(multiplier * point, expected_point)
+
+    def test_truediv(self):
+        point = Point(3, 6)
+        divisor = 3
+        expected_point = Point(1, 2)
+        self.assertEqual(point / divisor, expected_point)
+
+    def test_floordiv(self):
+        point = Point(3, 9)
+        divisor = 2
+        expected_point = Point(1, 4)
+        self.assertEqual(point // divisor, expected_point)
+
     def test_neg(self):
         point = Point(1, 1)
         expected_point = Point(-1, -1)

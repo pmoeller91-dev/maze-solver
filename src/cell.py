@@ -1,3 +1,4 @@
+from typing_extensions import Self
 from window import Window
 from point import Point
 from line import Line
@@ -66,3 +67,19 @@ class Cell:
         if self.has_left_wall:
             line = Line(Point(x1, y1), Point(x1, y2))
             window.draw_line(line, _cell_color)
+
+    def draw_move(self, to_cell: Self, undo=False):
+        """Draw a move from one cell to another in the maze. Red by default,
+        grey if it is a move that was undone.
+
+        Args:
+            to_cell (Self): The cell to draw the move to
+            undo (bool, optional): Whether the move is an undone move. Defaults to False.
+        """
+        color = "red" if undo is False else "gray"
+        center = (Point(self._x1, self._y1) + Point(self._x2, self._y2)) // 2
+        other_center = (
+            Point(to_cell._x1, to_cell._y1) + Point(to_cell._x2, to_cell._y2)
+        ) // 2
+        move_line = Line(center, other_center)
+        self._window.draw_line(move_line, fill_color=color)

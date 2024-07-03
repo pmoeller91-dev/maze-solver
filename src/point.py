@@ -103,3 +103,60 @@ class Point:
         if not isinstance(other, Point):
             return NotImplemented
         return Point(x=other.x - self.x, y=other.y - self.y)
+
+    def __mul__(self, other: object) -> Self:
+        """Multiplies a point by a constant, returning a new point. Returns
+        NotImplemented if ``other`` is not either a ``int`` or a ``float``.
+
+        Args:
+            other (object): The object being multiplied by
+
+        Returns:
+            Self: A point with the x and y scaled by the multiplier
+        """
+        if not isinstance(other, (int, float)):
+            return NotImplemented
+        return Point(x=self.x * other, y=self.y * other)
+
+    def __rmul__(self, other: object) -> Self:
+        """Multiplies a point by a constant, returning a new point. Returns
+        NotImplemented if ``other`` is not either a ``int`` or a ``float``.
+
+        Args:
+            other (object): The object being multiplied by
+
+        Returns:
+            Self: A point with the x and y scaled by ``other``
+        """
+        if not isinstance(other, (int, float)):
+            return NotImplemented
+        return Point(x=self.x * other, y=self.y * other)
+
+    def __truediv__(self, other: object) -> Self:
+        """Divides a point by a constant, returning a new point. Returns
+        NotImplemented if ``other`` is not either a ``int`` or a ``float``.
+
+        Args:
+            other (object): The object to divide by
+
+        Returns:
+            Self: A point with the x and y divided by ``other``.
+        """
+        if not isinstance(other, (int, float)):
+            return NotImplemented
+        return Point(x=self.x / other, y=self.y / other)
+
+    def __floordiv__(self, other: object) -> Self:
+        """Divides a point by a constant, returning a new point. Returns
+        NotImplemented if ``other`` is not either a ``int`` or a ``float``.
+
+        Args:
+            other (object): The object to divide by
+
+        Returns:
+            Self: A point with the x and y divided by ``other`` with the
+            coordinates floored according to standard floordiv.
+        """
+        if not isinstance(other, (int, float)):
+            return NotImplemented
+        return Point(x=self.x // other, y=self.y // other)
