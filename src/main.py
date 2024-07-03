@@ -1,17 +1,20 @@
 from window import Window
-from line import Line
-from point import Point
+from cell import Cell
+
+_width = 800
+_height = 600
 
 
 def main():
-    win = Window(800, 600)
+    win = Window(_width, _height)
 
-    # A simple "X" through the whole canvas
-    line = Line(Point(0, 0), Point(800, 600))
-    line2 = Line(Point(800, 0), Point(0, 600))
-
-    win.draw_line(line, fill_color="black")
-    win.draw_line(line2, fill_color="black")
+    cells = []
+    for i in range(16):
+        row = ((i * 2) // (_width // 64)) * 2
+        col = (i * 2) % (_width // 64)
+        cell = Cell(win, bool(i & 1), bool(i & 2), bool(i & 4), bool(i & 8))
+        cells.append(cell)
+        cell.draw(16 + col * 64, 16 + row * 64, 16 + 64 + col * 64, 16 + 64 + row * 64)
 
     win.wait_for_close()
 

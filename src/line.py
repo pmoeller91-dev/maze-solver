@@ -13,9 +13,9 @@ class Line:
             p2 (Point): The end point of the line
             width (int): The width of the line, default 2
         """
-        self.__p1 = p1
-        self.__p2 = p2
-        self.__width = width
+        self._p1 = p1
+        self._p2 = p2
+        self._width = width
 
     def draw(self, canvas: Canvas, fill_color: str) -> None:
         """Draws the line using the given color on the provided canvas.
@@ -24,5 +24,5 @@ class Line:
             canvas (Canvas): The canvas the line will be drawn on
             fill_color (str): The color the line will be drawn in
         """
-        p1, p2, width = self.__p1, self.__p2, self.__width
+        p1, p2, width = self._p1, self._p2, self._width
         canvas.create_line(p1.x, p1.y, p2.x, p2.y, fill=fill_color, width=width)
