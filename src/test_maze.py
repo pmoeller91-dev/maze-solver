@@ -110,34 +110,94 @@ class TestMaze(unittest.TestCase):
         target_cell = (12, 10)
         self.assertRaises(ValueError, maze._get_visitable_cells, *target_cell)
 
+    def test_get_visitable_cells_with_walls(self):
+        maze = Maze(0, 0, 10, 12, 10, 10)
+        target_cell_coords = (1, 1)
+        target_cell = maze._cells[target_cell_coords[0]][target_cell_coords[1]]
+        target_cell.has_left_wall = False
+        left_cell = maze._cells[target_cell_coords[0] - 1][target_cell_coords[1]]
+        left_cell.has_right_wall = False
+        expected_visitable_cells = [(Direction.LEFT, 0, 1)]
+        visitable_cells = maze._get_visitable_cells(
+            *target_cell_coords, ignore_walls=False
+        )
+        self.assertEqual(visitable_cells, expected_visitable_cells)
+
+    def test_can_visit_direction(self):
+        maze = Maze(0, 0, 10, 12, 10, 10)
+        target_cell = (1, 1)
+        self.assertEqual(maze._can_visit_direction(*target_cell, Direction.LEFT), True)
+
+    def test_can_visit_direction_with_walls(self):
+        maze = Maze(0, 0, 10, 12, 10, 10)
+        target_cell = (1, 1)
+        self.assertEqual(
+            maze._can_visit_direction(*target_cell, Direction.LEFT, False), False
+        )
+
+    def test_can_visit_direction_out_of_bounds_low(self):
+        maze = Maze(0, 0, 10, 12, 10, 10)
+        target_cell = (-1, -1)
+        self.assertRaises(
+            ValueError, maze._can_visit_direction, *target_cell, Direction.LEFT
+        )
+
+    def test_can_visit_direction_out_of_bounds_high(self):
+        maze = Maze(0, 0, 10, 12, 10, 10)
+        target_cell = (10, 12)
+        self.assertRaises(
+            ValueError, maze._can_visit_direction, *target_cell, Direction.LEFT
+        )
+
+    def test_can_visit_direction_out_of_bounds_destination(self):
+        maze = Maze(0, 0, 10, 12, 10, 10)
+        target_cell = (0, 0)
+        self.assertEqual(maze._can_visit_direction(*target_cell, Direction.LEFT), False)
+
     def test_break_walls_r_right(self):
         maze = Maze(0, 0, 1, 2, 10, 10, seed=0)
-        maze._break_cells_r(0, 0)
+        maze._break_walls_r(0, 0)
         self.assertEqual(maze._cells[0][0].has_right_wall, False)
         self.assertEqual(maze._cells[1][0].has_left_wall, False)
 
     def test_break_walls_r_left(self):
         maze = Maze(0, 0, 1, 2, 10, 10, seed=0)
-        maze._break_cells_r(1, 0)
+        maze._break_walls_r(1, 0)
         self.assertEqual(maze._cells[0][0].has_right_wall, False)
         self.assertEqual(maze._cells[1][0].has_left_wall, False)
 
     def test_break_walls_r_down(self):
         maze = Maze(0, 0, 2, 1, 10, 10, seed=0)
-        maze._break_cells_r(0, 0)
+        maze._break_walls_r(0, 0)
         self.assertEqual(maze._cells[0][0].has_bottom_wall, False)
         self.assertEqual(maze._cells[0][1].has_top_wall, False)
 
     def test_break_walls_r_up(self):
         maze = Maze(0, 0, 2, 1, 10, 10, seed=0)
-        maze._break_cells_r(0, 1)
+        maze._break_walls_r(0, 1)
         self.assertEqual(maze._cells[0][0].has_bottom_wall, False)
         self.assertEqual(maze._cells[0][1].has_top_wall, False)
 
     def test_break_walls_r_visit_all(self):
         maze = Maze(0, 0, 10, 10, 10, 10, seed=0)
-        maze._break_cells_r(0, 0)
+        maze._break_walls_r(0, 0)
         expected_cells_visited = [[True] * len(col) for col in maze._cells]
+        cells_visited = [[row.visited for row in col] for col in maze._cells]
+        self.assertEqual(cells_visited, expected_cells_visited)
+
+    def test_reset_cells_visited(self):
+        maze = Maze(0, 0, 10, 10, 10, 10)
+        maze._cells[4][4].visited = True
+        maze._reset_cells_visited()
+        self.assertEqual(maze._cells[4][4].visited, False)
+
+    def test_reset_cells_visited_all(self):
+        maze = Maze(0, 0, 10, 10, 10, 10)
+        for col in maze._cells:
+            for row in col:
+                row.visited = True
+        expected_cells_visited = [[False] * len(col) for col in maze._cells]
+        maze._reset_cells_visited()
         cells_visited = [[row.visited for row in col] for col in maze._cells]
         self.assertEqual(cells_visited, expected_cells_visited)
 

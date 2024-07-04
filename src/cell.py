@@ -16,7 +16,8 @@ class Cell:
         has_right_wall (bool): Whether the cell has a right wall
         has_bottom_wall (bool): Whether the cell has a bottom wall
         has_left_wall (bool): Whether the cell has a left wall
-        visited (bool): Whether the cell has been visited yet during maze generation.
+        visited (bool): Whether the cell has been visited yet during maze
+        generation or solving.
     """
 
     def __init__(
