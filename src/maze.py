@@ -1,6 +1,15 @@
+import random
+from enum import Enum
 from time import sleep
 from window import Window
 from cell import Cell
+
+
+class Direction(Enum):
+    UP = "UP"
+    RIGHT = "RIGHT"
+    DOWN = "DOWN"
+    LEFT = "LEFT"
 
 
 class Maze:
@@ -15,19 +24,30 @@ class Maze:
         cell_width: int,
         cell_height: int,
         window: Window | None = None,
+        seed: int | float | str | bytes | bytearray | None = None,
     ) -> None:
         """Creates a new 2D maze parented to the specified ``Window``.
 
         Args:
-            win (Window | None): The parent window to draw the maze on.
             x1 (int): The X coordinate of the top-left corner of the maze.
             y1 (int): The Y coordinate of the top-left corner of the maze.
             num_rows (int): The number of rows of cells in the maze.
             num_cols (int): The number of columns of cells in the maze.
             cell_width (int): The number of pixels wide each cell should be.
             cell_height (int): The number of pixels high each cell should be.
+            window (Window | None): The parent window to draw the maze on.
+            seed (int | float | str | bytes | bytearray | None): The seed used
+            to generate the maze. If ``None``, no initial seed will be used.
+            Defaults to ``None``.
+
+        Raises:
+            ValueError: Raises ValueError if:
+              - ``num_rows`` or ``num_cols`` are not at least 1.
+              - ``cell_height`` or ``cell_width`` are not at least 1.
         """
-        if num_rows == 0 or num_cols == 0:
+        if seed is not None:
+            random.seed(seed)
+        if num_rows <= 0 or num_cols <= 0:
             raise ValueError("Maze must have at least 1 row and 1 column")
         if cell_height <= 0 or cell_width <= 0:
             raise ValueError(
@@ -92,3 +112,77 @@ class Maze:
         exit_cell = self._cells[-1][-1]
         exit_cell.has_bottom_wall = False
         self._draw_cell(self._num_cols - 1, self._num_rows - 1)
+
+    def _break_cells_r(self, i: int, j: int) -> None:
+        """Recursively visit cells and break walls in a random direction, until
+        every cell in the maze has been visited.
+
+        Args:
+            i (int): X index of the current cell.
+            j (int): Y index of the current cell.
+        """
+        current_cell = self._cells[i][j]
+        current_cell.visited = True
+        while True:
+            cells_to_visit = self._get_visitable_cells(i, j)
+            if len(cells_to_visit) == 0:
+                self._draw_cell(i, j)
+                break
+            direction, vi, vj = cells_to_visit[random.randrange(0, len(cells_to_visit))]
+            visit_cell = self._cells[vi][vj]
+            match direction:
+                case Direction.UP:
+                    current_cell.has_top_wall = False
+                    visit_cell.has_bottom_wall = False
+                case Direction.RIGHT:
+                    current_cell.has_right_wall = False
+                    visit_cell.has_left_wall = False
+                case Direction.DOWN:
+                    current_cell.has_bottom_wall = False
+                    visit_cell.has_top_wall = False
+                case Direction.LEFT:
+                    current_cell.has_left_wall = False
+                    visit_cell.has_right_wall = False
+            self._break_cells_r(vi, vj)
+
+    def _get_visitable_cells(self, i: int, j: int) -> list[tuple[Direction, int, int]]:
+        """Gets visitable cells adjacent to a given cell. Cell is only visitable
+        if it has not already been ``visited``.
+
+        Args:
+            i (int): X index of the cell.
+            j (int): Y index of the cell.
+
+        Raises:
+            ValueError: Raises ValueError if ``i`` or ``j`` are out of bounds
+            based on the maze's number of columns or rows.
+
+        Returns:
+            list[tuple[Direction, int, int]]: A list of visitable cells, along
+            with the direction relative to the base cell.
+        """
+        last_col = self._num_cols - 1
+        last_row = self._num_rows - 1
+
+        if i > last_col or j > last_row or i < 0 or j < 0:
+            raise ValueError(f"Invalid cell index provided: ({i}, {j})")
+
+        visitable_cells: list[tuple[int, int]] = []
+
+        # Up
+        if j >= 1 and not self._cells[i][j - 1].visited:
+            visitable_cells.append((Direction.UP, i, j - 1))
+
+        # Right
+        if (i + 1) <= last_col and not self._cells[i + 1][j].visited:
+            visitable_cells.append((Direction.RIGHT, i + 1, j))
+
+        # Down
+        if (j + 1) <= last_row and not self._cells[i][j + 1].visited:
+            visitable_cells.append((Direction.DOWN, i, j + 1))
+
+        # Left
+        if i >= 1 and not self._cells[i - 1][j].visited:
+            visitable_cells.append((Direction.LEFT, i - 1, j))
+
+        return visitable_cells

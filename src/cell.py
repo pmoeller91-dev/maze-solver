@@ -16,6 +16,7 @@ class Cell:
         has_right_wall (bool): Whether the cell has a right wall
         has_bottom_wall (bool): Whether the cell has a bottom wall
         has_left_wall (bool): Whether the cell has a left wall
+        visited (bool): Whether the cell has been visited yet during maze generation.
     """
 
     def __init__(
@@ -45,6 +46,7 @@ class Cell:
         self.has_right_wall = has_right_wall
         self.has_bottom_wall = has_bottom_wall
         self.has_left_wall = has_left_wall
+        self.visited = False
 
     def draw(self, x1: int, y1: int, x2: int, y2: int) -> None:
         """Draws the cell to the parent canvas at the specified coordinates. If

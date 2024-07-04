@@ -12,6 +12,8 @@ def main():
 
     maze._break_entrance_and_exit()
 
+    maze._break_cells_r(0, 0)
+
     win.wait_for_close()
 
 
