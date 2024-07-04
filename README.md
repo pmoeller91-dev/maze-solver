@@ -1,7 +1,10 @@
 # Maze Solver
 
 This is a maze generator and solver created with Python and Tkinter. It was
-created as part of a guided project on [Boot.dev](https://www.boot.dev/)
+created as part of a guided project on [Boot.dev](https://www.boot.dev/).
+
+This program will animate generating a simple maze, and solving that maze, to
+allow for visualization of the underlying algorithms.
 
 # Running
 
@@ -11,8 +14,10 @@ created as part of a guided project on [Boot.dev](https://www.boot.dev/)
 - pip >= 24.1.1
 - pipenv >= 2024.0.1
 
-The maze solver can be run using `./main.sh`
+The maze solver can be run using `./main.sh`. Currently, the maze will generate
+and solve a single time. To generate an additional maze, the program can be
+closed and re-run.
 
 # Tests
 
-Tests can be executed using `./test.sh`
+All unit tests can be executed using `./test.sh`
